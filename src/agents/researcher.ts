@@ -21,13 +21,21 @@ export async function runResearcherAgent(
 
   const userPrompt = `PRD Title: ${context.title}\nPRD:\n${context.sourceText}\n\nReturn { search_queries }.`;
 
-  const queryOutput = await llm.generateJSON({
-    systemPrompt,
-    userPrompt,
-    schema: querySchema,
-    temperature: 0.2,
-    retries: 2,
-  });
+  const fallbackQueries = [
+    `${context.title} market trends`,
+    `${context.title} implementation best practices`,
+    `${context.title} case studies`,
+  ];
+
+  const queryOutput = await llm
+    .generateJSON({
+      systemPrompt,
+      userPrompt,
+      schema: querySchema,
+      temperature: 0.2,
+      retries: 2,
+    })
+    .catch(() => ({ search_queries: fallbackQueries }));
 
   const sources = await runSearchQueries(queryOutput.search_queries);
 
