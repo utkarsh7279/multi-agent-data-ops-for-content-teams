@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { BlogRenderer } from "@/components/blog/blog-renderer";
 
@@ -12,7 +13,7 @@ type OutputRow = {
   };
 };
 
-export default function FinalPage() {
+function FinalContent() {
   const params = useSearchParams();
   const prdId = params.get("prdId");
 
@@ -62,5 +63,13 @@ export default function FinalPage() {
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       <BlogRenderer title={title} content={body} />
     </section>
+  );
+}
+
+export default function FinalPage() {
+  return (
+    <Suspense fallback={<section className="space-y-4">Loading final output...</section>}>
+      <FinalContent />
+    </Suspense>
   );
 }

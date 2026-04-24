@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { MetricsCards } from "@/components/metrics/metrics-cards";
 
@@ -17,7 +18,7 @@ type Rubric = {
   };
 };
 
-export default function DashboardPage() {
+function DashboardContent() {
   const params = useSearchParams();
   const prdId = params.get("prdId");
 
@@ -71,5 +72,13 @@ export default function DashboardPage() {
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       <MetricsCards score={score} passed={passed} stageLatencies={stageLatencies} />
     </section>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<section className="space-y-4">Loading dashboard...</section>}>
+      <DashboardContent />
+    </Suspense>
   );
 }

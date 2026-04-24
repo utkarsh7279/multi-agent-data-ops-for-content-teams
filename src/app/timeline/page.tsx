@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { PipelineTimeline } from "@/components/timeline/pipeline-timeline";
 import { PipelineTimelineItem } from "@/lib/types/pipeline";
@@ -12,7 +13,7 @@ type TimelineRow = {
   completed_at: string | null;
 };
 
-export default function TimelinePage() {
+function TimelineContent() {
   const params = useSearchParams();
   const prdId = params.get("prdId");
 
@@ -87,5 +88,13 @@ export default function TimelinePage() {
       {isLoading ? <p className="text-sm text-slate-500">Refreshing status...</p> : null}
       <PipelineTimeline items={items} />
     </section>
+  );
+}
+
+export default function TimelinePage() {
+  return (
+    <Suspense fallback={<section className="space-y-4">Loading timeline...</section>}>
+      <TimelineContent />
+    </Suspense>
   );
 }
